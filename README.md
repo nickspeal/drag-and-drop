@@ -20,6 +20,8 @@ The app is deployed live at [www.speal.ca/drag-and-drop](http://www.speal.ca/dra
 1. Serve the app: `npm run start`
 1. Open your browser to `localhost:3000`
 
+In order to build and deploy the app, run `npm run build` and then `npm run deploy`.
+
 ## Inspecting the code
 
-Most of the core logic lives in `src/Column.js`. This component started out only being a column of rows, but has grown in scope to include instructions and the Desmos calculator. With more time, I'd refactor this structure such that the equations are all stored in a parent component, and the Columns component would only be responsible for rendering these equations in a user-configurable order. Beyond the hygienic benefit of separation of concerns, this would also be a good idea because then the data passed to the Calculator component would not change as the presentational order is configured. 
+Most of the core logic lives in `src/Column.js`. This component started out only being a column of rows, but has grown in scope to include instructions and the Desmos calculator. With more time, I'd refactor this structure such that the equations are all stored in a parent component, and the Columns component would only be responsible for rendering these equations in a user-configurable order. Beyond the hygienic benefit of separation of concerns, this would also be a good idea because then the data passed to the Calculator component would not change as the presentational order is configured.

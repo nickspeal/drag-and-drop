@@ -12,13 +12,14 @@ class Row extends Component {
         onMouseDown={this.props.onMouseDown}
         onKeyDown={this.props.onKeyDown}
       >
-        {this.props.number !== undefined && <span className="label">Eq {this.props.number}.</span>}
+        {this.props.number !== undefined && <span className="label">Eq {this.props.number}</span>}
         {!this.props.spacer && (
           <input
             className="input"
             value={this.props.value}
             onMouseDown={e => e.stopPropagation()}
             onChange={this.props.onChange}
+            readOnly={this.props.readOnly}
             autoFocus />
         )
       }

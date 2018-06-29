@@ -13,7 +13,7 @@ class Column extends Component {
     cursorOffset: 0,
     items: [
       {id: 0, value: 'y = 2x -2' },
-      {id: 1, value: 'y = -3x + 5' },
+      {id: 1, value: 'y = \\sin(x)' },
       {id: 2, value: 'y = x^2' },
       {id: 3, value: '' },
     ],
@@ -44,8 +44,6 @@ class Column extends Component {
     // Insert the draggedItem where the spacer was;
     if(this.state.draggedItem) {
       nextItems.splice(this.computeSpacerIndex(), 0, this.state.draggedItem);
-    } else {
-      console.error("Mouseup cannot replace draggeditem: ", this.state.draggedItem);
     }
     this.setState({ items: nextItems, draggedItem: undefined });
   }
@@ -72,7 +70,6 @@ class Column extends Component {
   }
 
   incrementPosition = (id, delta) => {
-    console.log("about to move item ", id, delta)
     const index = this.state.items.findIndex(item => item.id === id);
     const nextIndex = Math.max(0, Math.min(index + delta, this.state.items.length));
     const item = this.state.items[index];
@@ -150,6 +147,7 @@ class Column extends Component {
             top: this.computeFloatingPosition(),
           }}
           value={this.state.draggedItem.value}
+          readOnly
         />
       )
     }
@@ -157,8 +155,8 @@ class Column extends Component {
     return (
       <div className="container">
         <div>
-          <h2>Enter your equations below</h2>
-          <h3>Click and Drag the boxes or use the arrow keys to re-order</h3>
+          <h2>Enter latex equations below</h2>
+          <h3>Click and drag the boxes or use the arrow keys to re-order</h3>
           <AddRowButton onClick={this.addNewRow} className="addbutton" />
           <div className="column" id={COLUMN_ID}>
             {staticRows}
