@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import AddRowButton from './AddRowButton';
 import Row from './Row';
 import './Column.css';
 
@@ -86,6 +87,7 @@ class Column extends Component {
 
     return (
         <div className="column">
+          <AddRowButton onClick={() => this.setState({ items: [...this.state.items, ''] })} />
           {nextRows}
           {floatRow}
         </div>
