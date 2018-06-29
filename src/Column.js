@@ -8,33 +8,48 @@ const rowHeight = 40;
 class Column extends Component {
   state = {
     cursor: 0,
-    items: ['one', 'two', 'three', 'four'],
+    items: [
+      {id: 1, value: 'one' },
+      {id: 2, value: 'two' },
+      {id: 3, value: 'three' },
+    ],
     draggedItem: undefined,
   }
 
   componentDidMount = () => {
     window.addEventListener('mousemove', this.onMouseMove);
-    window.addEventListener('mousedown', this.onMouseDown);
     window.addEventListener('mouseup', this.onMouseUp);
   }
 
-  onMouseDown = (event) => {
-    const clickedRowIndex = Math.floor(event.y / rowHeight);
+  onMouseDown = (clickedRowId) => {
     const nextItems = [...this.state.items];
-    // Remove one item from clickedRowIndex and assign to draggedItem. Mutates nextItems
-    const draggedItem = nextItems.splice(clickedRowIndex, 1);
+    // Find the index of the item in state.items matching the ID for this click
+    const clickedRowIndex = nextItems.findIndex(item => item.id === clickedRowId);
+    // Remove one item from that index and assign it to draggedItem. Mutates nextItems
+    const draggedItem = nextItems.splice(clickedRowIndex, 1)[0];
     this.setState({ items: nextItems, draggedItem });
   }
 
-  onMouseUp = (event) => {
+  onMouseUp = () => {
     const nextItems = [...this.state.items];
     // Insert the draggedItem where the spacer was;
-    nextItems.splice(this.computeSpacerIndex(), 0, this.state.draggedItem);
+    if(this.state.draggedItem) {
+      nextItems.splice(this.computeSpacerIndex(), 0, this.state.draggedItem);
+    } else {
+      console.error("Mouseup cannot replace draggeditem: ", this.state.draggedItem);
+    }
     this.setState({ items: nextItems, draggedItem: undefined });
   }
 
   onMouseMove = (event) => {
     this.setState({ cursor: event.y });
+  }
+
+  onValueChange = (id, event) => {
+    const index = this.state.items.findIndex(item => item.id === id);
+    const nextItems = [...this.state.items];
+    nextItems[index].value = event.target.value;
+    this.setState({ items: nextItems });
   }
 
   computeFloatingPosition = () => {
@@ -52,10 +67,11 @@ class Column extends Component {
         style = {{
           height: `${rowHeight}px`
         }}
-        key = {item}
-      >
-        {item}
-      </Row>
+        key = {item.id}
+        value={item.value}
+        onChange={(event) => this.onValueChange(item.id, event)}
+        onMouseDown={() => this.onMouseDown(item.id)}
+      />
     ));
   }
 
@@ -71,7 +87,6 @@ class Column extends Component {
       nextRows = this.renderRows(this.state.items);
       const spacer = <Row style={{ backgroundColor: 'white', height: `${rowHeight}px` }} key='spacer' />;
       nextRows.splice(this.computeSpacerIndex(), 0, spacer);
-
       floatRow = (
         <Row
           style = {{
@@ -79,18 +94,19 @@ class Column extends Component {
             position: 'absolute',
             top: this.computeFloatingPosition(),
           }}
-        >
-          {this.state.draggedItem}
-        </Row>
+          value={this.state.draggedItem.value}
+        />
       )
     }
 
     return (
+      <div>
+        <AddRowButton onClick={() => this.setState({ items: [...this.state.items, ''] })} />
         <div className="column">
-          <AddRowButton onClick={() => this.setState({ items: [...this.state.items, ''] })} />
           {nextRows}
           {floatRow}
         </div>
+      </div>
     );
   }
 }
