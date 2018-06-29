@@ -20,6 +20,7 @@ class Column extends Component {
   onMouseDown = (event) => {
     const clickedRowIndex = Math.floor(event.y / rowHeight);
     const nextItems = [...this.state.items];
+    // Remove one item from clickedRowIndex and assign to draggedItem. Mutates nextItems
     const draggedItem = nextItems.splice(clickedRowIndex, 1);
     this.setState({ items: nextItems, draggedItem });
   }
@@ -36,11 +37,10 @@ class Column extends Component {
   }
 
   computeFloatingPosition = () => {
-    return Math.min(this.state.cursor, 4 * rowHeight);
+    return Math.min(this.state.cursor, this.state.items.length * rowHeight);
   }
 
   computeSpacerIndex = () => {
-    // TODO explain comment
     return Math.floor((this.state.cursor + (rowHeight / 2)) / rowHeight);
   }
 
@@ -59,7 +59,7 @@ class Column extends Component {
   }
 
   render() {
-    let nextRows = [];
+    let nextRows;
     let floatRow;
 
     if (this.state.draggedItem === undefined) {
@@ -73,17 +73,17 @@ class Column extends Component {
 
       floatRow = (
         <Row
-        style = {{
-          height: `${rowHeight}px`,
-          position: 'absolute',
-          top: this.computeFloatingPosition(),
-        }}
-        key = "floatRow"
+          style = {{
+            height: `${rowHeight}px`,
+            position: 'absolute',
+            top: this.computeFloatingPosition(),
+          }}
         >
           {this.state.draggedItem}
         </Row>
       )
     }
+
     return (
         <div className="column">
           {nextRows}
