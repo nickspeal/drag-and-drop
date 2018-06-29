@@ -1,0 +1,6 @@
+.row {
+  height: 40px;
+  width: 100%;
+  padding: 8px;
+  cursor: move;
+}
