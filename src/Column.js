@@ -6,62 +6,89 @@ const rowHeight = 40;
 
 class Column extends Component {
   state = {
-    dragging: true,
     cursor: 0,
-    rows: []
+    items: ['one', 'two', 'three', 'four'],
+    draggedItem: undefined,
   }
 
   componentDidMount = () => {
     window.addEventListener('mousemove', this.onMouseMove);
-    this.createRows();
+    window.addEventListener('mousedown', this.onMouseDown);
+    window.addEventListener('mouseup', this.onMouseUp);
+  }
+
+  onMouseDown = (event) => {
+    const clickedRowIndex = Math.floor(event.y / rowHeight);
+    const nextItems = [...this.state.items];
+    const draggedItem = nextItems.splice(clickedRowIndex, 1);
+    this.setState({ items: nextItems, draggedItem });
+  }
+
+  onMouseUp = (event) => {
+    const nextItems = [...this.state.items];
+    // Insert the draggedItem where the spacer was;
+    nextItems.splice(this.computeSpacerIndex(), 0, this.state.draggedItem);
+    this.setState({ items: nextItems, draggedItem: undefined });
   }
 
   onMouseMove = (event) => {
     this.setState({ cursor: event.y });
   }
 
-  createRows = () => {
-    const colors = ['red', 'blue', 'grey', 'yellow'];
-    const rows = colors.map(backgroundColor => (
-      <Row
-        style = {{
-          backgroundColor,
-          height: `${rowHeight}px`
-        }}
-        key = {backgroundColor}
-      />
-    ));
-    console.log(rows);
-    this.setState({ rows });
-  }
-
   computeFloatingPosition = () => {
     return Math.min(this.state.cursor, 4 * rowHeight);
   }
 
-  renderRowsWithSpacer = () => {
-    if (!this.state.dragging) {
-      return this.state.rows;
-    }
+  computeSpacerIndex = () => {
     // TODO explain comment
-    const index = Math.floor((this.state.cursor + (rowHeight / 2)) / rowHeight);
-    const spacer = <Row style={{ backgroundColor: 'white', height: `${rowHeight}px` }} key='spacer' />
-    console.log(index);
-    const nextRows = [...this.state.rows]
-    nextRows.splice(index, 0, spacer);
-    return nextRows;
+    return Math.floor((this.state.cursor + (rowHeight / 2)) / rowHeight);
+  }
+
+  // Maps an array of strings to an array of <Row> components with the string as a child
+  renderRows = items => {
+    return items.map(item => (
+      <Row
+        style = {{
+          height: `${rowHeight}px`
+        }}
+        key = {item}
+      >
+        {item}
+      </Row>
+    ));
   }
 
   render() {
-    return (
-      <div>
-        <div className="column">
-          {this.renderRowsWithSpacer()}
-          <Row style={{ backgroundColor: 'pink', height: `${rowHeight}px`, position: 'absolute', top: this.computeFloatingPosition() }} />
-        </div>
-        Cursor: {this.state.cursor}
-      </div>
+    let nextRows = [];
+    let floatRow;
 
+    if (this.state.draggedItem === undefined) {
+      // Not Dragging
+      nextRows = this.renderRows(this.state.items);
+    } else {
+      // Dragging
+      nextRows = this.renderRows(this.state.items);
+      const spacer = <Row style={{ backgroundColor: 'white', height: `${rowHeight}px` }} key='spacer' />;
+      nextRows.splice(this.computeSpacerIndex(), 0, spacer);
+
+      floatRow = (
+        <Row
+        style = {{
+          height: `${rowHeight}px`,
+          position: 'absolute',
+          top: this.computeFloatingPosition(),
+        }}
+        key = "floatRow"
+        >
+          {this.state.draggedItem}
+        </Row>
+      )
+    }
+    return (
+        <div className="column">
+          {nextRows}
+          {floatRow}
+        </div>
     );
   }
 }

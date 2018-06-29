@@ -5,7 +5,7 @@ class Row extends Component {
   render() {
     return (
       <div className="row" style={{...this.props.style}}>
-        Placeholder
+        {this.props.children}
       </div>
     );
   }

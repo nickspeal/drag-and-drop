@@ -1,4 +1,4 @@
-## Timing
+## Timing Plan
 
 15 min spec/definition
 30 min prototype proof of concept validate
@@ -9,6 +9,13 @@
 30 min buffer
 --
 3 hr
+
+## Real Timing
+
+9 spec start
+9:15 spec Done
+10 - perma-drag proof of concept done
+10:40 - got actual drag and drop working
 
 
 ## Spec
@@ -53,3 +60,18 @@ Deployment
     Downsides:
       No git
       Annoying to use React, which gives me duplicatable components in an easy way and a state/props model I'm familiar with
+
+
+# Click to select functionality
+  On click, a row needs to pop out of the static list
+  State should store `items`: just a list of strings for all the rows
+  When dragging, we should remove the relevant string from the `items` and set it to `draggedItem`
+  In render,
+    if no draggedItem, then just render items
+    If draggedItem, then render a Row for each item, plus a placeholder, plus an absolutely positioned item
+  On mouseup, move the draggedItem into items state
+
+
+# TODOs
+    More sensible Key for rows to avoid rerendering while allowing duplicate text content
+    <Row> is rendered similarly 3 different times
