@@ -13,5 +13,5 @@ The app is deployed live at [www.speal.ca/drag-and-drop](http://www.speal.ca/dra
 1. Make sure you have node installed: `node --version`, otherwise [install it](https://nodejs.org/).
 1. Clone this repo and then CD into it
 1. Install dependencies: `npm install`
-1. Serve the app: `npm start`
+1. Serve the app: `npm run start`
 1. Open your browser to `localhost:3000`
