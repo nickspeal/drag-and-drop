@@ -11,12 +11,12 @@ class Column extends Component {
     cursor: 0,
     cursorOffset: 0,
     items: [
-      {id: 1, value: 'one' },
-      {id: 2, value: 'two' },
-      {id: 3, value: 'three' },
+      {id: 0, value: '' },
     ],
     draggedItem: undefined,
   }
+
+  nextRowId = 1;
 
   componentDidMount = () => {
     document.addEventListener('mousemove', this.onMouseMove);
@@ -60,6 +60,16 @@ class Column extends Component {
     const nextItems = [...this.state.items];
     nextItems[index].value = event.target.value;
     this.setState({ items: nextItems });
+  }
+
+  addNewRow = () => {
+    const row = {
+      id: this.nextRowId,
+      value: '',
+    }
+    this.nextRowId += 1;
+
+    this.setState({ items: [...this.state.items, row] });
   }
 
   computeFloatingPosition = () => {
@@ -107,7 +117,7 @@ class Column extends Component {
 
     return (
       <div>
-        <AddRowButton onClick={() => this.setState({ items: [...this.state.items, ''] })} />
+        <AddRowButton onClick={this.addNewRow} />
         <div className="column" id={COLUMN_ID}>
           {staticRows}
           {floatRow}
