@@ -11,12 +11,14 @@ class Column extends Component {
     cursor: 0,
     cursorOffset: 0,
     items: [
-      {id: 0, value: '' },
+      {id: 0, value: 'y = mx + b' },
+      {id: 1, value: 'y = ax^2 + bx + c' },
+      {id: 2, value: '' },
     ],
     draggedItem: undefined,
   }
 
-  nextRowId = 1;
+  nextRowId = 3;
 
   componentDidMount = () => {
     document.addEventListener('mousemove', this.onMouseMove);
@@ -55,6 +57,29 @@ class Column extends Component {
     }
   }
 
+  onKeyDown = (id, event) => {
+    if (event.key === 'ArrowDown') {
+      this.incrementPosition(id, 1);
+    } else if (event.key === 'ArrowUp') {
+      this.incrementPosition(id, -1);
+    } else if (event.key === 'Enter') {
+      this.addNewRow();
+    } else if (event.key === 'Backspace') {
+      this.deleteRow(id);
+    }
+  }
+
+  incrementPosition = (id, delta) => {
+    console.log("about to move item ", id, delta)
+    const index = this.state.items.findIndex(item => item.id === id);
+    const nextIndex = Math.max(0, Math.min(index + delta, this.state.items.length));
+    const item = this.state.items[index];
+    const nextItems = [...this.state.items];
+    nextItems.splice(index, 1);
+    nextItems.splice(nextIndex, 0, item);
+    this.setState({ items: nextItems });
+  }
+
   onValueChange = (id, event) => {
     const index = this.state.items.findIndex(item => item.id === id);
     const nextItems = [...this.state.items];
@@ -70,6 +95,16 @@ class Column extends Component {
     this.nextRowId += 1;
 
     this.setState({ items: [...this.state.items, row] });
+  }
+
+  deleteRow = (id) => {
+    const index = this.state.items.findIndex(item => item.id === id);
+    // Only delete empty rows
+    if (this.state.items[index].value.length === 0) {
+      const nextItems = [...this.state.items];
+      nextItems.splice(index, 1);
+      this.setState({ items: nextItems });
+    }
   }
 
   computeFloatingPosition = () => {
@@ -88,6 +123,7 @@ class Column extends Component {
         value={item.value}
         onChange={(event) => this.onValueChange(item.id, event)}
         onMouseDown={(event) => this.onMouseDown(item.id, event)}
+        onKeyDown={(event) => this.onKeyDown(item.id, event)}
       />
     ));
   }
@@ -117,6 +153,8 @@ class Column extends Component {
 
     return (
       <div>
+        <h2>Enter your equations below</h2>
+        <h3>Click and Drag the boxes or use the arrow keys to re-order</h3>
         <AddRowButton onClick={this.addNewRow} />
         <div className="column" id={COLUMN_ID}>
           {staticRows}
