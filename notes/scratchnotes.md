@@ -71,7 +71,25 @@ Deployment
     If draggedItem, then render a Row for each item, plus a placeholder, plus an absolutely positioned item
   On mouseup, move the draggedItem into items state
 
+# Data input functionality
+  Option:
+    Row renders an <input>
+    value is passed passed in from props
+    onChange, call parent onChange
+    Column replaces the item in the items state with the new value
+
+  Option:
+    Column doesn't need to know about the text value, except to be able to render the Row with floating props or not
+
+    Change the items => Row mapping
+    state.items could store an array of components
+    state.draggedItem could change the props when moving in and out of the array
+    Warning: need to preserve state when cloning a component?
+
 
 # TODOs
     More sensible Key for rows to avoid rerendering while allowing duplicate text content
     <Row> is rendered similarly 3 different times
+
+
+# Cleanup notes
