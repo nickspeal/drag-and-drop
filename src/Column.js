@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import AddRowButton from './AddRowButton';
+import Calculator from './Calculator';
 import Row from './Row';
 import { ROW_HEIGHT } from './Row';
 import './Column.css';
@@ -11,14 +12,15 @@ class Column extends Component {
     cursor: 0,
     cursorOffset: 0,
     items: [
-      {id: 0, value: 'y = mx + b' },
-      {id: 1, value: 'y = ax^2 + bx + c' },
-      {id: 2, value: '' },
+      {id: 0, value: 'y = 2x -2' },
+      {id: 1, value: 'y = -3x + 5' },
+      {id: 2, value: 'y = x^2' },
+      {id: 3, value: '' },
     ],
     draggedItem: undefined,
   }
 
-  nextRowId = 3;
+  nextRowId = 4;
 
   componentDidMount = () => {
     document.addEventListener('mousemove', this.onMouseMove);
@@ -153,12 +155,18 @@ class Column extends Component {
     }
 
     return (
-      <div>
-        <AddRowButton onClick={this.addNewRow} className="addbutton" />
-        <div className="column" id={COLUMN_ID}>
-          {staticRows}
-          {floatRow}
+      <div className="container">
+        <div>
+          <h2>Enter your equations below</h2>
+          <h3>Click and Drag the boxes or use the arrow keys to re-order</h3>
+          <AddRowButton onClick={this.addNewRow} className="addbutton" />
+          <div className="column" id={COLUMN_ID}>
+            {staticRows}
+            {floatRow}
+          </div>
         </div>
+        {/*Warning: This array expansion sends new props on every mousemove */}
+        <Calculator items={[...this.state.items, this.state.draggedItem]}/>
       </div>
     );
   }
