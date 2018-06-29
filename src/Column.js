@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
 import AddRowButton from './AddRowButton';
 import Row from './Row';
+import { ROW_HEIGHT } from './Row';
 import './Column.css';
 
-const rowHeight = 40;
+const COLUMN_ID = 'column';
 
 class Column extends Component {
   state = {
     cursor: 0,
+    cursorOffset: 0,
     items: [
       {id: 1, value: 'one' },
       {id: 2, value: 'two' },
@@ -17,17 +19,20 @@ class Column extends Component {
   }
 
   componentDidMount = () => {
-    window.addEventListener('mousemove', this.onMouseMove);
-    window.addEventListener('mouseup', this.onMouseUp);
+    document.addEventListener('mousemove', this.onMouseMove);
+    document.addEventListener('mouseup', this.onMouseUp);
   }
 
-  onMouseDown = (clickedRowId) => {
+  onMouseDown = (clickedRowId, event) => {
+    // click height within the row:
+    const cursorOffset = event.clientY - event.target.getBoundingClientRect().top;
     const nextItems = [...this.state.items];
     // Find the index of the item in state.items matching the ID for this click
     const clickedRowIndex = nextItems.findIndex(item => item.id === clickedRowId);
     // Remove one item from that index and assign it to draggedItem. Mutates nextItems
     const draggedItem = nextItems.splice(clickedRowIndex, 1)[0];
-    this.setState({ items: nextItems, draggedItem });
+    event.persist();
+    this.setState({ items: nextItems, cursorOffset, draggedItem }, () => this.onMouseMove(event));
   }
 
   onMouseUp = () => {
@@ -42,7 +47,12 @@ class Column extends Component {
   }
 
   onMouseMove = (event) => {
-    this.setState({ cursor: event.y });
+    if (this.state.draggedItem !== undefined) {
+      const columnTopOffset = document.getElementById(COLUMN_ID).getBoundingClientRect().top;
+      // Position of cursor relative to the top of the column
+      const cursor = event.clientY - columnTopOffset - this.state.cursorOffset;
+      this.setState({ cursor });
+    }
   }
 
   onValueChange = (id, event) => {
@@ -53,44 +63,40 @@ class Column extends Component {
   }
 
   computeFloatingPosition = () => {
-    return Math.min(this.state.cursor, this.state.items.length * rowHeight);
+    return Math.max(0, Math.min(this.state.cursor, this.state.items.length * ROW_HEIGHT));
   }
 
   computeSpacerIndex = () => {
-    return Math.floor((this.state.cursor + (rowHeight / 2)) / rowHeight);
+    return Math.max(0, Math.floor((this.state.cursor + (ROW_HEIGHT / 2)) / ROW_HEIGHT));
   }
 
   // Maps an array of strings to an array of <Row> components with the string as a child
   renderRows = items => {
     return items.map(item => (
       <Row
-        style = {{
-          height: `${rowHeight}px`
-        }}
         key = {item.id}
         value={item.value}
         onChange={(event) => this.onValueChange(item.id, event)}
-        onMouseDown={() => this.onMouseDown(item.id)}
+        onMouseDown={(event) => this.onMouseDown(item.id, event)}
       />
     ));
   }
 
   render() {
-    let nextRows;
+    let staticRows;
     let floatRow;
 
     if (this.state.draggedItem === undefined) {
       // Not Dragging
-      nextRows = this.renderRows(this.state.items);
+      staticRows = this.renderRows(this.state.items);
     } else {
       // Dragging
-      nextRows = this.renderRows(this.state.items);
-      const spacer = <Row style={{ backgroundColor: 'white', height: `${rowHeight}px` }} key='spacer' />;
-      nextRows.splice(this.computeSpacerIndex(), 0, spacer);
+      staticRows = this.renderRows(this.state.items);
+      const spacer = <Row key='spacer' spacer />;
+      staticRows.splice(this.computeSpacerIndex(), 0, spacer);
       floatRow = (
         <Row
           style = {{
-            height: `${rowHeight}px`,
             position: 'absolute',
             top: this.computeFloatingPosition(),
           }}
@@ -102,8 +108,8 @@ class Column extends Component {
     return (
       <div>
         <AddRowButton onClick={() => this.setState({ items: [...this.state.items, ''] })} />
-        <div className="column">
-          {nextRows}
+        <div className="column" id={COLUMN_ID}>
+          {staticRows}
           {floatRow}
         </div>
       </div>
