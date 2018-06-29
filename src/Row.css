@@ -1,5 +1,21 @@
 .row {
-  width: 100%;
+  width: 80%;
   cursor: move;
-  border: 1px solid red;
+  border: 2px solid rgb(18, 122, 61);
+  margin-top: -2px;
+  background-color: rgba(250, 250, 250, 0.9);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0 20px;
+}
+
+.input {
+    width: 100%;
+    min-width: 0;
+}
+
+.label {
+  white-space: nowrap;
+  padding-right: 20px;
 }

@@ -1,6 +1,7 @@
 .column {
-  border: 2px solid #000;
-  width: 40%;
-  margin: auto;
   position: relative;
+}
+
+.addbutton {
+  margin-bottom: 20px;
 }

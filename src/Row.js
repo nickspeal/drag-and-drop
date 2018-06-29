@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './Row.css';
 
-export const ROW_HEIGHT = 100;
+export const ROW_HEIGHT = 40;
 
 class Row extends Component {
   render() {
@@ -12,8 +12,14 @@ class Row extends Component {
         onMouseDown={this.props.onMouseDown}
         onKeyDown={this.props.onKeyDown}
       >
+        {this.props.number !== undefined && <span className="label">Eq {this.props.number}.</span>}
         {!this.props.spacer && (
-          <input value={this.props.value} onMouseDown={e => e.stopPropagation()} onChange={this.props.onChange} autoFocus />
+          <input
+            className="input"
+            value={this.props.value}
+            onMouseDown={e => e.stopPropagation()}
+            onChange={this.props.onChange}
+            autoFocus />
         )
       }
       </div>

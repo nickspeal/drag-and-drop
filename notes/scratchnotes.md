@@ -10,13 +10,6 @@
 --
 3 hr
 
-## Real Timing
-
-9 spec start
-9:15 spec Done
-10 - perma-drag proof of concept done
-10:40 - got actual drag and drop working
-
 
 ## Spec
 
@@ -86,6 +79,32 @@ Deployment
     state.draggedItem could change the props when moving in and out of the array
     Warning: need to preserve state when cloning a component?
 
+  New strategy
+    Rows should handle their own mouse events. This solves the problems of:
+      listening to events on the whole window
+      identifying cleanly which row is clicked
+      encapsulating code
+      PRIMARY: Not creating a new component when one is dragged. Only its css should change to move it somewhere. That way it can maintain its state.
+    Rows get their own onMouseDown/Up methods
+    Rows control their own css. Can position themselves absolutely
+    Parent needs to know mousedown/up state so that it can render a spacer
+
+    onmousedown, row calls parent function with its ID
+    parent sends down an isDragging prop so the row knows how to render itself (floating or not)
+    parent also renders a spacer
+    onMouseup, row calls parent and parent state updates and propagates
+
+  Problem with this new implementation:
+    I can't render a Row once and save it in state, beacuse then it doesnt get updated
+    Instead I need to render the Row only in Render
+    What stays in state? Perhaps a sorted array of itemIds? Sorted by user-specified order
+    ie: items: [1, 4, 3, 2]
+    Is passing the key enough to prevent losing child state?
+    Why am I doing all this? is it better to just store the values in parent state as I had before?
+      Don't like that because updating that whole list on every key feels somehow awkward
+      Do like it because the parent should have access to all the data to pass to the graph
+      Gunna try it.
+      Just need to sort out better keys. Items could be a list of {id, value} objects. IDs are unique for keys.
 
 # TODOs
     More sensible Key for rows to avoid rerendering while allowing duplicate text content

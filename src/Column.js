@@ -117,13 +117,14 @@ class Column extends Component {
 
   // Maps an array of strings to an array of <Row> components with the string as a child
   renderRows = items => {
-    return items.map(item => (
+    return items.map((item, index) => (
       <Row
         key = {item.id}
         value={item.value}
         onChange={(event) => this.onValueChange(item.id, event)}
         onMouseDown={(event) => this.onMouseDown(item.id, event)}
         onKeyDown={(event) => this.onKeyDown(item.id, event)}
+        number={index}
       />
     ));
   }
@@ -153,9 +154,7 @@ class Column extends Component {
 
     return (
       <div>
-        <h2>Enter your equations below</h2>
-        <h3>Click and Drag the boxes or use the arrow keys to re-order</h3>
-        <AddRowButton onClick={this.addNewRow} />
+        <AddRowButton onClick={this.addNewRow} className="addbutton" />
         <div className="column" id={COLUMN_ID}>
           {staticRows}
           {floatRow}
